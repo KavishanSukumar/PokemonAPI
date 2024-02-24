@@ -34,15 +34,15 @@ namespace PokemonReviewApp.Controllers
 		}
 
 		[HttpGet("{catgoryId}")]
-		[ProducesResponseType(200, Type = typeof(Pokemon))]
+		[ProducesResponseType(200, Type = typeof(Category))]
 		[ProducesResponseType(400)]
-		public IActionResult GetPokemons(int catgoryId)
+		public IActionResult GetCategory(int catgoryId)
 		{
 			if (!_categoryRepository.CategoryExists(catgoryId))
 			{
 				return NotFound();
 			}
-			var category = _mapper.Map<PokemonDto>(_categoryRepository.GetCategory(catgoryId));
+			var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategory(catgoryId));
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
@@ -51,6 +51,25 @@ namespace PokemonReviewApp.Controllers
 			return Ok(category);
 
 		}
+
+		[HttpGet("pokemon/{categoryId}")]
+		[ProducesResponseType(200,Type=typeof(IEnumerable<Pokemon>))]
+		[ProducesResponseType(400)]
+		public IActionResult GetPokemonByCategoryId(int categoryId)
+		{
+			var pokemons = _mapper.Map<List<PokemonDto>>(
+				_categoryRepository.GetPokemonByCategory(categoryId));
+
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			return Ok(pokemons);
+
+		}
+
+
 
 
 	}
